@@ -1,4 +1,4 @@
- /*
+/*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
  distributed with this work for additional information
@@ -6,16 +6,16 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
-
+ 
  http://www.apache.org/licenses/LICENSE-2.0
-
+ 
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
-*/
+ */
 
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -29,8 +29,8 @@
 
 
 @interface weibo () {
-
-
+    
+    
 }
 @property (nonatomic, strong) CDVInvokedUrlCommand *pendingCommand;
 
@@ -52,12 +52,12 @@
         [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         return ;
     }
-
+    
     NSLog(@"插件初始化，appKey: %@ ,redirectURI: %@.", self.appKey,
-    self.redirectURI);;
-
+          self.redirectURI);;
+    
     //[WeiboSDK enableDebugMode:YES];
-
+    
     [WeiboSDK registerApp:self.appKey];
     
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
@@ -77,7 +77,7 @@
                          @"Other_Info_3": @{@"key1": @"obj1", @"key2": @"obj2"}};
     [WeiboSDK sendRequest:request];
     self.pendingCommand = command;
-
+    
 }
 
 - (void)share:(CDVInvokedUrlCommand*) command{
@@ -97,8 +97,12 @@
         message.text = text;
     }
     WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message];
-
-    [WeiboSDK sendRequest:request];
+    
+    if([WeiboSDK isWeiboAppInstalled]){
+        [WeiboSDK sendRequest:request];
+    } else{
+        [self sendSingleMsgWithOutClient:message];
+    }
 }
 
 - (void)sendImageContent{
@@ -123,56 +127,65 @@
         message.imageObject = wbimage;
     }
     WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message];
+    
+    if([WeiboSDK isWeiboAppInstalled]){
+        [WeiboSDK sendRequest:request];
+    } else{
+        [self sendSingleMsgWithOutClient:message];
+    }
+}
 
+- (void)sendSingleMsgWithOutClient:(WBMessageObject*)message
+{
+    WBAuthorizeRequest *authRequest = [WBAuthorizeRequest request];
+    authRequest.redirectURI = self.redirectURI;
+    authRequest.scope = @"all";
+    
+    NSUserDefaults *saveDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *token = [saveDefaults objectForKey:@"access_token"];
+    
+    WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:message authInfo:authRequest access_token:token];
+    
+    request.userInfo = @{@"ShareMessageFrom": @"CDVViewController",
+                         @"Other_Info_1": [NSNumber numberWithInt:123],
+                         @"Other_Info_2": @[@"obj1", @"obj2"],
+                         @"Other_Info_3": @{@"key1": @"obj1", @"key2": @"obj2"}};
     [WeiboSDK sendRequest:request];
 }
+
 
 - (void)isInstalled:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult *result;
-
+    
     result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[WeiboSDK isWeiboAppInstalled]];
-        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 
 - (void)didReceiveWeiboResponse:(WBBaseResponse *)response
 {
-    NSLog(response.debugDescription);
-
     if ([response isKindOfClass:WBSendMessageToWeiboResponse.class])
     {
         //NSString *title = @"发送结果";
         //NSString *message = [NSString stringWithFormat:@"响应状态: %d\n响应UserInfo数据: %@\n原请求UserInfo数据: %@",(int)response.statusCode, response.userInfo, response.requestUserInfo];
-
-
     }
     else if ([response isKindOfClass:WBAuthorizeResponse.class])
     {
-
-
         //success
         if(response.statusCode==0){
             NSDictionary *info=[NSDictionary dictionaryWithObjectsAndKeys:[(WBAuthorizeResponse *)response userID],@"uid",[(WBAuthorizeResponse*)response accessToken],@"token",[(WBAuthorizeResponse*)response refreshToken],@"refresh_token" , nil];
-
+            
             CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:info];
             [self.commandDelegate sendPluginResult:result
                                         callbackId:self.pendingCommand.callbackId];
-
-            NSLog([NSString stringWithFormat:@"认证结果：statusCode:%d userId：%@  accessToken：%@ refreshToke：%@",response.statusCode,[(WBAuthorizeResponse *)response userID],[(WBAuthorizeResponse *)response accessToken],[(WBAuthorizeResponse *)response refreshToken]]);
-
-
         }else{
             //error
             CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
             [self.commandDelegate sendPluginResult:result
                                         callbackId:self.pendingCommand.callbackId];
         }
-
-
-
         self.pendingCommand = nil;
-
     }
 }
 
