@@ -3,7 +3,7 @@ Cordova (PhoneGap) Plugin to connect to the native Weibo SDK
 
 ### Installation
 
-	cordova plugins add cordova-plugin-weibo
+	cordova plugins add https://github.com/sngyai/ionic-plugin-weibo
 
 
 ### iOS
