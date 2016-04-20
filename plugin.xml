@@ -4,11 +4,11 @@
     id="cordova-plugin-weibo"
     version="1.3.0">
     <name>Weibo</name>
-    <description>weibo plugin for cordova</description>
-    <author>BelinChung</author>
+    <description>weibo plugin for ionic</description>
+    <author>sngyai</author>
     <license>MIT</license>
     <keywords>cordova,weibo,sdk</keywords>
-    <repo>https://github.com/BelinChung/cordova-plugin-weibo</repo>
+    <repo>https://github.com/sngyai/ionic-plugin-weibo</repo>
     <js-module src="www/weibo.js" name="weibo">
         <clobbers target="window.weibo" />
     </js-module>
