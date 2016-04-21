@@ -33,7 +33,7 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.weiboInit();        
+        app.weiboInit();
     },
     weiboInit: function(){
         // 初始化微博插件
@@ -60,19 +60,13 @@ var app = {
         })
     },
     shareText: function(){
-        window.weibo.isInstalled(function(status){
-            if(status){
-                window.weibo.share({
-                    type: 'image',
-                    data: 'http://ww3.sinaimg.cn/large/77565b1bjw1eqd6s01q6ej20c80c80t4.jpg',
-                    text: 'test my plugin'
-                },function(res){
-                    console.log(res);
-                });    
-            }else{
-                alert('请先安装微博客户端！');
-            }
-        })
+      window.weibo.share({
+        type: 'image',
+        data: 'http://ww3.sinaimg.cn/large/77565b1bjw1eqd6s01q6ej20c80c80t4.jpg',
+        text: 'test my plugin'
+      },function(res){
+        console.log(res);
+      });
     }
 };
 
