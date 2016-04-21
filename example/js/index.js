@@ -37,7 +37,7 @@ var app = {
     },
     weiboInit: function(){
         // 初始化微博插件
-        window.weibo.init('2798261xxx','http://www.sina.com.cn/callback.html');
+        window.weibo.init('2798261xxx','https://api.weibo.com/oauth2/default.html');
 
         // 按钮事件绑定
         var parentElement = document.getElementById('wrapper');
