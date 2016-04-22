@@ -1,4 +1,4 @@
-package com.hiliaox;
+package com.sngyai;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
