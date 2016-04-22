@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hiliaox;
+package com.sngyai;
 
 import android.content.Context;
 import android.content.SharedPreferences;
