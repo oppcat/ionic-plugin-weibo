@@ -27,7 +27,8 @@
                     android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
           </activity>
         </config-file>
-        <source-file src="src/android/Weibo.java" target-dir="src/com/hiliaox" />
+        <source-file src="src/android/Weibo.java" target-dir="src/com/sngyai" />
+        <source-file src="src/android/AccessTokenKeeper.java" target-dir="src/com/sngyai" />
         <source-file src="src/android/weibosdkcore_v3.1.1.jar" target-dir="libs" framework="true" />
         <source-file src="src/android/libs/arm64-v8a/libweibosdkcore.so" target-dir="libs/arme64-v8a/" />
         <source-file src="src/android/libs/armeabi/libweibosdkcore.so" target-dir="libs/armeabi/" />
